@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -49,3 +50,38 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+player = Player(room["outside"])
+
+while True:
+    
+    print(f"You are in: {player.room.place}")
+    print(f"{player.room.description}\n")
+    
+    userMove = input("Enter a cardinal direction (n, s, w, e) to move in that direction. Enter q to quit the game: ")
+
+    if userMove == "n": 
+        if player.room.n_to:
+            player.room = player.room.n_to
+        else:
+            print("There is no room to the North of this room\n")
+    elif userMove == "s":
+        if player.room.s_to:
+            player.room = player.room.s_to
+        else:
+            print("There is no room to the South of this room\n")
+    elif userMove == "e":
+        if player.room.e_to:
+            player.room = player.room.e_to
+        else:
+            print("There is no room to the East of this room\n")
+    elif userMove == "w":
+        if player.room.w_to:
+            player.room = player.room.w_to
+        else:
+            print("There is no room to the West of this room\n")
+    elif userMove == "q":
+        exit()
+    else:
+        print("Invalid input, try again!")
+    
+
