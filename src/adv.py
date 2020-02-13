@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
-
+from item import Item
+from colors import prRed, prGreen, prYellow, prCyan, prLightGray, prPurple
 # Declare all the rooms
 
 room = {
@@ -22,6 +23,14 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+# Declare items
+
+items = {
+    'sword':    Item("sword", "It's dangerous to go alone, take this dull blade!"),
+    "shield":   Item("shield", "A basic shield"),
+    "wand":     Item("wand", "Not quite the a deahtly hallow but it will do")
+}
+
 
 # Link rooms together
 
@@ -33,6 +42,11 @@ room['overlook'].s_to = room['foyer']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
+
+# Add items to rooms
+room['foyer'].items = [items['shield']]
+room['outside'].items = [items['sword']]
+room['treasure'].items = [items['wand']]
 
 #
 # Main
@@ -50,38 +64,56 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
-player = Player(room["outside"])
+userName = input("What is your name? ")
+player = Player(userName,room["outside"])
+prCyan(f"Welcome to the game {player.name}\n")
+prCyan("--------------------------------------------------\n")
 
 while True:
     
-    print(f"You are in: {player.room.place}")
-    print(f"{player.room.description}\n")
-    
-    userMove = input("Enter a cardinal direction (n, s, w, e) to move in that direction. Enter q to quit the game: ")
-
+    print(f"You are in: {player.current_room.name}")
+    print(f"{player.current_room.description}\n")
+    player.printRoomItems()
+        
+    userMove = input(f"""\033[93m
+Enter a cardinal direction (n, s, w, e) to move in that direction. 
+You can also pick up items by typing 'get <item_name>'
+You can drop items by typing 'drop <item_name>'
+Enter q to quit the game.\033[00m
+""")
+  
     if userMove == "n": 
-        if player.room.n_to:
-            player.room = player.room.n_to
+        if player.current_room.n_to:
+            player.current_room = player.current_room.n_to
         else:
-            print("There is no room to the North of this room\n")
+            prRed("There is no room to the North of this room\n")
     elif userMove == "s":
-        if player.room.s_to:
-            player.room = player.room.s_to
+        if player.current_room.s_to:
+            player.current_room = player.current_room.s_to
         else:
-            print("There is no room to the South of this room\n")
+            prRed("There is no room to the South of this room\n")
     elif userMove == "e":
-        if player.room.e_to:
-            player.room = player.room.e_to
+        if player.current_room.e_to:
+            player.current_room = player.current_room.e_to
         else:
-            print("There is no room to the East of this room\n")
+            prRed("There is no room to the East of this room\n")
     elif userMove == "w":
-        if player.room.w_to:
-            player.room = player.room.w_to
+        if player.current_room.w_to:
+            player.current_room = player.current_room.w_to
         else:
-            print("There is no room to the West of this room\n")
+            prRed("There is no room to the West of this room\n")
+    elif userMove.startswith("get"):
+        words = userMove.split()
+        if len(player.current_room.items) > 0 and player.current_room.hasItem(words[1]):
+            player.grabItem(items[words[1]])
+        else:
+            prRed(f"This room doesn't have a {words[1]}")
+    elif userMove.startswith("drop"):
+        words =  userMove.split()
+        player.dropItem(words[1])
     elif userMove == "q":
         exit()
     else:
-        print("Invalid input, try again!")
+        prRed("Invalid input, try again!\n")
     
 
