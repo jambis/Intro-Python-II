@@ -76,7 +76,8 @@ while True:
     player.printRoomItems()
         
     userMove = input(f"""\033[93m
-Enter a cardinal direction (n, s, w, e) to move in that direction. 
+Enter a cardinal direction (n, s, w, e) to move in that direction.
+You can check your inventory by typing 'i' or 'inventory' 
 You can also pick up items by typing 'get <item_name>'
 You can drop items by typing 'drop <item_name>'
 Enter q to quit the game.\033[00m
@@ -111,6 +112,8 @@ Enter q to quit the game.\033[00m
     elif userMove.startswith("drop"):
         words =  userMove.split()
         player.dropItem(words[1])
+    elif userMove == "i" or userMove == "inventory":
+        player.printInventory()
     elif userMove == "q":
         exit()
     else:
